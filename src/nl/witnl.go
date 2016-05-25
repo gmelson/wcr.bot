@@ -7,13 +7,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
-const(
-	var REPLACE_WCR = "Weekend Coffee Roasters"
+const (
+	WCR_REPLACE_1 = "weekend coffee roasters"
+	WCR_REPLACE_2 = "weekend coffee"
 )
-
-
 
 type Message struct {
 	_text    string `json:"_text"`
@@ -31,7 +31,6 @@ type Message struct {
 	} `json:"entities"`
 	MsgID string `json:"msg_id"`
 }
-
 
 func (m *Message) GetIntent(q string) (err error) {
 
@@ -74,7 +73,19 @@ func (m *Message) GetIntent(q string) (err error) {
 
 }
 
+func (m *Message) ReplaceWords(q string) (err error, replaced string) {
 
-func (m *Message) ReplaceWords(q string) (err error){
-	
+	//Order dependant; Replace full Weekend Coffee Roasters, then look for Weekend Coffee
+	// followed by Weekend Roasters
+	q = strings.ToLower(q)
+	if strings.Contains(q, WCR_REPLACE_1) {
+		replaced = strings.Replace(q, WCR_REPLACE_1, "wcr", -1)
+	} else if strings.Contains(q, WCR_REPLACE_2) {
+		replaced = strings.Replace(q, WCR_REPLACE_2, "wcr", -1)
+	} else {
+		replaced = q
+	}
+
+	return
+
 }

@@ -3,6 +3,7 @@ package nl
 
 import (
 	"log"
+	"strings"
 	"testing"
 )
 
@@ -24,9 +25,21 @@ func TestGetIntent(t *testing.T) {
 		err := m.GetIntent(intent[1])
 		log.Println("Done with GetIntent")
 		if err != nil || m.Entities.Intent[0].Value != intent[0] {
-			t.Errorf("Intent does not match %s for phrase %s\n", m.Entities.Intent[0].Value, intent[0])
+			t.Errorf("Intent does not match %s\n for phrase %s\n", m.Entities.Intent[0].Value, intent[0])
 		}
-		log.Printf("Intent value %s", m.Entities.Intent[0].Value)
-		//fmt.Printf("Intent value %s", m.Entities.Intent[0].Value)
+		log.Printf("Intent value %s\n", m.Entities.Intent[0].Value)
 	}
+}
+
+func TestReplaceWords(t *testing.T) {
+	var sentences = [...]string{"we work for Weekend Coffee Roasters", "we work for Weekend Coffee", "Weekend Coffee is roasting", "we work for wcr on the Weekend"}
+	m := new(Message)
+	for _, sentence := range sentences {
+		err, replaced := m.ReplaceWords(sentence)
+		if err != nil || strings.Contains(replaced, "wcr") == false {
+			t.Errorf("String not replaced correctly with wcr; orig = %s\nreplaced = %s\n\n", sentence, replaced)
+		}
+		log.Printf("Replaced %s\n with new string %s\n\n", sentence, replaced)
+	}
+
 }
