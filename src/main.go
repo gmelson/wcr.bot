@@ -5,13 +5,27 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"nl"
 )
 
 func ProcessRequest(w http.ResponseWriter, req *http.Request) {
-	//message := req.FormValue("message")
+	q := req.FormValue("message")
+	var answer string
+
+	// Substitute words and get Intent with Entities
+	message := new(nl.Message)
+	_, q = message.ReplaceWords(q)
+	err := message.GetIntent(q)
+	if err == nil {
+		//Answer based on rules
+		a := new(nl.Answer)
+		a.Message = *message
+		err, answer = a.GetAnswer()
+	}
 
 	//Set for cross domain stuff
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Write([]byte(answer))
 }
 
 func main() {

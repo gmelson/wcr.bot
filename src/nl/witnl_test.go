@@ -43,3 +43,20 @@ func TestReplaceWords(t *testing.T) {
 	}
 
 }
+
+func TestGetAnswer(t *testing.T) {
+	q := "What is Weekend coffee roasters"
+	message := new(Message)
+	_, q = message.ReplaceWords(q)
+	err := message.GetIntent(q)
+	if nil != err {
+		t.Errorf("Problem getting intent for query %s\n", q)
+	}
+	a := new(Answer)
+	a.message = *message
+	err, resp := a.GetAnswer()
+	if nil != err {
+		t.Errorf("Unable to get answer for intent %s", message.Entities.Intent[0].Value)
+	}
+	log.Printf("Answer returned %s\n\n", resp)
+}
