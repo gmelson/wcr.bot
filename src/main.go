@@ -2,7 +2,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"nl"
@@ -31,7 +33,7 @@ type Body struct {
 }
 
 func ProcessRequest(w http.ResponseWriter, req *http.Request) {
-	q := req.FormValue("message")
+
 	var answer string
 
 	//Handle messenger challenge if GET otherwise handle message
@@ -43,16 +45,29 @@ func ProcessRequest(w http.ResponseWriter, req *http.Request) {
 		}
 	} else {
 		//This is a POST so expect FB Message
-		req.Body.Read()
-		// Substitute words and get Intent with Entities
-		message := new(nl.Message)
-		_, q = message.ReplaceWords(q)
-		err := message.GetIntent(q)
-		if err == nil {
-			//Answer based on rules
-			a := new(nl.Answer)
-			a.Message = *message
-			err, answer = a.GetAnswer()
+		body, err := ioutil.ReadAll(req.Body)
+		if nil == err {
+			bodyParts := new(Body)
+			err = json.Unmarshal(body, bodyParts)
+			if nil == err {
+				for _, messages := range bodyParts.Entry[0].Messaging {
+					// Substitute words and get Intent with Entities
+					message := new(nl.Message)
+					_, messages.Message.Text = message.ReplaceWords(messages.Message.Text)
+					err := message.GetIntent(messages.Message.Text)
+					if err == nil {
+						//Answer based on rules
+						a := new(nl.Answer)
+						a.Message = *message
+						err, answer = a.GetAnswer()
+					}
+
+				}
+
+			}
+
+		} else {
+			answer = err.Error()
 		}
 
 	}
