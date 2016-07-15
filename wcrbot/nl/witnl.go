@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"appengine/urlfetch"
-	"appengine"
+	"google.golang.org/appengine/urlfetch"
+	"golang.org/x/net/context"
+	"google.golang.org/appengine/log"
 	"bytes"
 )
 
@@ -36,7 +37,7 @@ type Message struct {
 		} `json:"phrase_to_translate"`
 	} `json:"entities"`
 	MsgID string `json:"msg_id"`
-	Context appengine.Context
+	Context context.Context
 }
 
 func (m *Message) GetIntent(q string) (err error) {
@@ -107,9 +108,9 @@ func (m *Message) SendResponse(answer string, sender string) (err error) {
 
 	//create json response
 	messageData := fmt.Sprintf("{\"text\":\"%s\"}", answer)
-	m.Context.Infof("messageData: " + messageData)
+	log.Infof(m.Context,"messageData: " + messageData)
 	str := fmt.Sprintf("{\"recipient\":{\"id\":\"%s\"},\"message\":%s}", sender, messageData)
-	m.Context.Infof("str: " + str)
+	log.Infof(m.Context,"str: " + str)
 	var jsonStr = []byte(str)	
 	req, err := http.NewRequest("POST", requestUrl.String(), bytes.NewBuffer(jsonStr))
 	if err != nil {

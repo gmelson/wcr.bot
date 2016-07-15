@@ -3,9 +3,9 @@ package nl
 
 const (
 	about        = "Weekend Coffee Roasters is a small batch roaster located in San Jose California."
-	activities   = "Weekend Coffee Roasters will be participating in Makers Market on June 11, located in Santana Row."
+	activities   = "Weekend Coffee Roasters will be participating in Makers Market on July 9, located in Santana Row."
 	availability = "You can buy on www.amazon.com or our website http://www.weekendcoffeeroasters.com/buy.html"
-	adoptBeach   = "We've adopted Seabright!  Our next clean up is in June."
+	adoptBeach   = "We've adopted Seabright!  Our next clean up is in August."
 	beanType     = "Thank you!"
 	buyCoffee    = "What type of roast would you like?"
 	shipping     = "Shipping cost $5.95 and usually takes four days."
